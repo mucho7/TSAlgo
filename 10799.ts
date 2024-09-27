@@ -5,12 +5,11 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-let input: string[] = [];
+let input: IterableIterator<string>;
 
 rl.on("line", (line) => {
   // 입력 전처리
-  // ()(((()())(())()))(())
-  input = line.split("");
+  input = line[Symbol.iterator]();
   rl.close();
 });
 
@@ -19,16 +18,21 @@ rl.on("close", () => {
   let openParen = 0;
   let res = 0;
 
-  input.forEach((char, index) => {
-    if (char === "(") openParen += 1;
-    else if (char === ")") {
+  let currentChar = input.next();
+  let prevChar: "(" | ")" | undefined;
+
+  while (!currentChar.done) {
+    if (currentChar.value === "(") openParen += 1;
+    else if (currentChar.value === ")") {
       openParen -= 1;
-      if (input[index - 1] === "(") {
+      if (prevChar === "(") {
         res += openParen;
-        console.log(res, openParen);
       } else res++;
     }
-  });
+
+    prevChar = currentChar.value;
+    currentChar = input.next();
+  }
 
   console.log(res);
   process.exit();
