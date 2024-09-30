@@ -1,42 +1,34 @@
-import * as readline from "node:readline";
+const fs = require("fs");
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+const input: number[] = (
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString()
+    : `8
+20
+42
+0`
+)
+  .split("\n")
+  .map((x: string) => parseInt(x));
+input.pop(); // 0 삭제
 
-let input: number[] = [];
-
-rl.on("line", (line) => {
-  // 입력 전처리
-  input.push(parseInt(line));
-});
-
-rl.on("close", () => {
-  // 메인 로직
-  const maxNumber = 1000001;
-  const primeCache = Array(maxNumber).fill(1);
-
-  // 소수 일괄 등록
-  for (let i = 3; i <= Math.sqrt(maxNumber); i += 2) {
-    if (primeCache[i])
-      for (let j = i * 2; j < maxNumber; j += i) primeCache[j] = 0;
-  }
-
-  const findPrimeSum = (num: number): string | null => {
-    if (num === 0) return;
-
-    for (let prime = 3; prime <= num / 2; prime += 2) {
-      const complement = num - prime;
-      if (primeCache[prime] && primeCache[complement]) {
-        return `${num} = ${prime} + ${complement}`;
-      }
+// 주어진 수보다 작은 소수 중에 가장 큰 수 찾기
+const largestNum = Math.max(...input);
+const check = new Array(largestNum + 1).fill(false);
+for (let i = 2; i <= largestNum; i++) {
+  if (!check[i]) {
+    for (let j = i * i; j <= largestNum; j += i) {
+      check[j] = true;
     }
-    return null;
-  };
-
-  const res = input.map(findPrimeSum);
-
-  res.forEach((str) => str && console.log(str));
-  process.exit();
+  }
+}
+let result = "";
+input.map((x) => {
+  for (let i = 3; i < x; i += 2) {
+    if (!check[i] && !check[x - i]) {
+      result += `${x} = ${i} + ${x - i}\n`;
+      break;
+    }
+  }
 });
+console.log(result);
