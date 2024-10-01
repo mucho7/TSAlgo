@@ -10,3 +10,9 @@ TypeScript로 알고리즘을 풀어보기 위한 시험용 레포
   - **Docs**: 새로운 문서의 추가 및 수정
   - **Chore**: 기타 변경 사항
   - **Revert**: 작업 되돌리기
+
+
+- **Problem Platform**
+  - **BOJ** : 백준
+  - **PRO** : 프로그래머스
+
